@@ -1,4 +1,5 @@
 import React, { useEffect } from 'react';
+import Layout from '../components/Layout';
 
 const Marketplace = () => {
   useEffect(() => {
@@ -7,10 +8,12 @@ const Marketplace = () => {
   }, []);
 
   return (
-    <div style={{ padding: '2rem' }}>
-      <h1 style={{ fontSize: '2rem', color: 'green' }}>🚀 Hello from Marketplace!</h1>
-      <p>If you see this, Marketplace.js is working ✅</p>
-    </div>
+    <Layout>
+      <div style={{ padding: '2rem' }}>
+        <h1 style={{ fontSize: '2rem', color: 'green' }}>🚀 Hello from Marketplace!</h1>
+        <p>If you see this, Marketplace.js is working ✅</p>
+      </div>
+    </Layout>
   );
 };
 

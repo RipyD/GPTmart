@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-
+import FeaturedSections from '../components/FeaturedSections';
 const LandingPage = () => {
   const [featured, setFeatured] = useState([]);
   const [weekly, setWeekly] = useState([]);
@@ -29,7 +29,7 @@ const LandingPage = () => {
     <>
     <header className="w-full px-6 py-4 flex justify-between items-center bg-[#1f2937] border-b border-gray-700 shadow-sm transition duration-300 hover:shadow-md hover:bg-[#232d3c]">
       <div className="flex items-center space-x-3">
-        <img src="/gptmart-logo-circle.png" alt="GPTmart logo" className="w-8 h-8 object-contain bg-transparent" />
+        <img src="/gptmart-logo-circle.svg" alt="GPTmart logo" className="w-8 h-8 object-contain bg-transparent" />
         <span className="text-xl font-bold text-white">GPTmart</span>
       </div>
       <nav className="space-x-6 text-white">
