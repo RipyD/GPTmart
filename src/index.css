@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer components {
+  /* Custom styles go here */
+}
+body {
+  background-color: #050810;
+  color: white;
+}

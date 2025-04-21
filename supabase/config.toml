@@ -1,0 +1,13 @@
+
+[functions.create-checkout]
+enabled = true
+verify_jwt = true
+import_map = "./functions/create-checkout/deno.json"
+entrypoint = "./functions/create-checkout/index.ts"
+
+[functions.promote-featured]
+enabled = true
+verify_jwt = true
+import_map = "./functions/promote-featured/deno.json"
+entrypoint = "./functions/promote-featured/index.ts"
+
