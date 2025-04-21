@@ -1,3 +1,79 @@
+# 🧠 GPTmart — Rent. Earn. Build.
+
+Welcome to **GPTmart**, the first platform where developers and creators can **rent out their custom GPTs** — and get paid to do what they love.
+
+> Think: *Shopify meets OpenAI*. You build the bots. We handle the business.
+
+
+---
+
+## 🚀 What Is GPTmart?
+
+GPTmart is a sleek, creator-focused marketplace built to:
+
+- 🎯 **Monetize** your GPTs with rental-based access
+- 🧰 **Showcase** your assistants in a public storefront
+- 📊 **Track** usage, views, and revenue via analytics
+- 💳 **Integrate** seamlessly with Stripe & Supabase Auth
+
+All powered by **React**, **Supabase**, **Tailwind**, and **Vercel**.
+
+---
+
+## 🔥 Features
+
+- 🧠 Creator dashboard to manage and list GPTs
+- 🌐 Public marketplace for users to browse & rent
+- 🔒 Auth with Google and Supabase
+- 📈 Analytics & usage insights
+- 🧾 Stripe integration for payments
+- 🕒 Time-based GPT access logic (rentals that expire)
+
+---
+
+
+---
+
+## 🧪 Status: Stealth Mode 👀
+
+GPTmart is currently in **early access / soft launch phase**. We're gathering feedback, onboarding founding creators, and tightening up the platform for a public wave.
+
+Want early access?
+
+👉 [Join the waitlist](https://notion-link.com/form) <!-- Replace with real Notion form -->
+
+---
+
+## 🛠️ Tech Stack
+
+| Tech         | Description                |
+|--------------|----------------------------|
+| React        | Frontend framework         |
+| Supabase     | Backend, DB, Auth          |
+| Stripe       | Payments & subscriptions   |
+| Vercel       | Hosting & deployment       |
+| Tailwind CSS | UI styling                 |
+| Recharts     | Creator analytics          |
+
+---
+
+## 💡 Inspiration
+
+We saw GPT creators shipping brilliant tools… but no way to monetize them. GPTmart was born to give devs a home to **showcase, share, and sell** what they’ve built.
+
+No APIs. No hassle. Just revenue.
+
+---
+
+## ✨ Founding Creators Wanted
+
+We’re building this **with you**. If you’ve created a GPT worth sharing — whether it’s for business, art, niche workflows, or fun — we want to feature you.
+
+
+
+
+
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
