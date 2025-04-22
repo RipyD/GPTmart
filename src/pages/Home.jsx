@@ -6,28 +6,7 @@ const Home = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0e121c] to-[#1c243b] text-white font-sans">
       {/* Header */}
-      <header className="w-full px-6 py-4 flex justify-between items-center bg-gradient-to-r from-[#1f2937] to-[#4b5563] shadow-md">
-        <div className="flex items-center space-x-3">
-        <div className="flex items-center space-x-3">
-  <img
-    src="/gptmart-logo-circle.png" // Replace with actual filename if different
-    alt="GPTmart logo"
-    className="w-12 h-12 rounded-full shadow-lg"
-  />
-  <span className="text-3xl font-extrabold text-white tracking-tight">GPTmart</span>
-</div>
-
-
-          
-        </div>
-        <nav className="flex items-center space-x-6">
-          <Link to="/marketplace" className="text-white hover:underline">Marketplace</Link>
-          <Link to="/dashboard" className="text-white hover:underline">Dashboard</Link>
-          <Link to="/analytics" className="text-white hover:underline">Analytics</Link>
-          <Link to="/pricing" className="text-white hover:underline">Pricing</Link>
-          <Link to="/login" className="bg-white text-purple-600 font-semibold px-4 py-1 rounded-md hover:bg-gray-100">Sign In</Link>
-        </nav>
-      </header>
+     
 
       {/* Hero Section */}
       <main className="px-6 py-16 max-w-6xl mx-auto text-center">

@@ -125,6 +125,21 @@ const AnalyticsDashboard = () => {
             </ResponsiveContainer>
           </div>
         </div>
+        {!creator?.is_premium && (
+  <div className="mt-16 bg-gradient-to-r from-purple-700 to-pink-600 p-6 rounded-xl text-white shadow-xl text-center animate-fade-in">
+    <h3 className="text-2xl font-bold mb-2">Unlock Deeper Insights</h3>
+    <p className="mb-4 max-w-xl mx-auto">
+      See traffic sources, conversion funnels, time-on-page analytics and more.
+      Upgrade to Pro to access premium tools designed to help you grow faster.
+    </p>
+    <a
+      href="/pricing"
+      className="inline-block bg-white text-purple-700 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition"
+    >
+      🔓 Upgrade to Pro
+    </a>
+  </div>
+)}
 
         <h2 className="text-xl font-semibold mb-4">Creator GPTs</h2>
         <div className="overflow-x-auto flex space-x-4 pb-4">

@@ -1,10 +1,11 @@
-// src/pages/Marketplace.jsx
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
 
 const Marketplace = () => {
   const [gpts, setGpts] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('All');
+  const categories = ['All', 'Productivity', 'Dev Tools', 'Education', 'Creative', 'Finance'];
 
   useEffect(() => {
     const fetchGpts = async () => {
@@ -15,6 +16,10 @@ const Marketplace = () => {
 
     fetchGpts();
   }, []);
+
+  const filteredGpts = selectedCategory === 'All'
+    ? gpts
+    : gpts.filter((gpt) => gpt.category === selectedCategory);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#150c2a] to-[#1c243b] text-white px-6 py-12">
@@ -38,9 +43,26 @@ const Marketplace = () => {
               <span className="relative z-10">🛠️ Rent Out Your GPT</span>
             </Link>
           </div>
-</div>
-<div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {gpts.map((gpt) => (
+        </div>
+
+        {/* Category Filter */}
+        <div className="mb-10 text-center">
+          <p className="text-lg text-pink-400 font-bold mb-2 tracking-wide uppercase animate-pulse">
+            ✨ Choose Your Craft
+          </p>
+          <select
+            className="bg-gradient-to-r from-purple-700 to-pink-600 border border-purple-500 text-white px-5 py-3 rounded-full font-semibold shadow-lg hover:shadow-pink-500/40 focus:outline-none transition duration-300"
+            value={selectedCategory}
+            onChange={(e) => setSelectedCategory(e.target.value)}
+          >
+            {categories.map((cat) => (
+              <option key={cat} value={cat} className="text-black">{cat}</option>
+            ))}
+          </select>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
+          {filteredGpts.map((gpt) => (
             <Link
               to={`/gpt/${gpt.id}`}
               key={gpt.id}
@@ -48,8 +70,8 @@ const Marketplace = () => {
             >
               {gpt.is_founder && (
                 <div className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-semibold px-2 py-1 rounded-full shadow ring-2 ring-orange-500 ring-offset-1">
-  🏆 Founder
-</div>
+                  🏆 Founder
+                </div>
               )}
               <img
                 src={gpt.image_url || 'https://via.placeholder.com/300x200'}
