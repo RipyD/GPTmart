@@ -4,19 +4,6 @@ import { Link } from 'react-router-dom';
 
 const Pricing = () => {
   const [user, setUser] = useState(null);
-  const endpoint =
-  process.env.NODE_ENV === 'development'
-    ? 'http://localhost:54321/functions/v1/create-stripe-session' // If you're using Supabase CLI
-    : 'https://your-project-id.functions.supabase.co/create-stripe-session';
-
-const res = await fetch(endpoint, {
-  method: 'POST',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({
-    user_id: user?.id,
-    email: user?.email
-  }),
-});
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -28,15 +15,20 @@ const res = await fetch(endpoint, {
 
   const handleUpgrade = async () => {
     try {
-        const res = await fetch('https://<your-project-ref>.functions.supabase.co/create-stripe-session', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              user_id: user?.id,
-              email: user?.email
-            }),
-          });
-          
+      const endpoint =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:54321/functions/v1/create-stripe-session'
+          : 'https://YOUR_PROJECT_REF.functions.supabase.co/create-stripe-session'; // <-- Replace with your actual project ref
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: user?.id,
+          email: user?.email
+        }),
+      });
+
       const { url } = await res.json();
       if (url) {
         window.location.href = url;
