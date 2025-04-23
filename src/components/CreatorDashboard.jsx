@@ -1,41 +1,62 @@
-import React from 'react';
+// src/pages/CreatorDashboard.jsx
+import React, { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { Link } from 'react-router-dom';
 
 const CreatorDashboard = () => {
+  const [user, setUser] = useState(null);
+  const [gpts, setGpts] = useState([]);
+
+  useEffect(() => {
+    const fetchUserAndGPTs = async () => {
+      const { data: session } = await supabase.auth.getUser();
+      setUser(session.user);
+
+      const { data: userGPTs, error } = await supabase
+        .from('gpts')
+        .select('*')
+        .eq('creator_id', session.user.id);
+
+      if (!error) setGpts(userGPTs);
+    };
+
+    fetchUserAndGPTs();
+  }, []);
+
   return (
-    <section className="py-16 bg-gray-100">
-      <div className="max-w-7xl mx-auto text-center">
-        <h2 className="text-3xl font-semibold">Creator Dashboard</h2>
-        <p className="mt-4 text-lg">Manage your AI tools and track your earnings.</p>
-        <div className="mt-8">
-          <button className="px-6 py-2 bg-green-500 text-white rounded hover:bg-green-400">
-            Add New Tool
-          </button>
+    <div className="min-h-screen bg-gradient-to-b from-[#0e121c] to-[#1c243b] text-white px-6 py-16">
+      <div className="max-w-7xl mx-auto">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold mb-2">🎨 Your Creator Storefront</h1>
+          <p className="text-gray-400">Manage your GPT listings, preview your store, and track your performance.</p>
         </div>
-        <div className="mt-10">
-          <h3 className="text-2xl font-semibold">Your Tools</h3>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-6">
-            <div className="bg-white p-6 shadow-lg rounded-lg">
-              <h4 className="text-xl font-semibold">Your Tool 1</h4>
-              <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
-                Edit Tool
-              </button>
-            </div>
-            <div className="bg-white p-6 shadow-lg rounded-lg">
-              <h4 className="text-xl font-semibold">Your Tool 2</h4>
-              <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
-                Edit Tool
-              </button>
-            </div>
-            <div className="bg-white p-6 shadow-lg rounded-lg">
-              <h4 className="text-xl font-semibold">Your Tool 3</h4>
-              <button className="mt-4 px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-500">
-                Edit Tool
-              </button>
-            </div>
+
+        <div className="flex justify-end mb-6">
+          <Link to="/dashboard/add" className="bg-green-500 hover:bg-green-600 text-white px-6 py-2 rounded-lg font-semibold shadow">
+            ➕ Add New GPT
+          </Link>
+        </div>
+
+        {gpts.length > 0 ? (
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+            {gpts.map((gpt) => (
+              <div key={gpt.id} className="bg-[#121a2c] rounded-xl border border-gray-700 shadow-md p-4">
+                <img src={gpt.image_url || 'https://via.placeholder.com/300x200'} alt={gpt.name} className="w-full h-40 object-cover rounded-md mb-4" />
+                <h3 className="text-xl font-bold text-white">{gpt.name}</h3>
+                <p className="text-sm text-gray-400 line-clamp-2 mb-2">{gpt.description}</p>
+                <p className="text-green-400 font-bold mb-3">${gpt.price}</p>
+                <div className="flex justify-between text-sm text-gray-400">
+                  <span>👁 {gpt.views || 0}</span>
+                  <span>💸 {gpt.total_rentals || 0}</span>
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
+        ) : (
+          <p className="text-center text-gray-500 mt-10">No GPTs listed yet. Click "Add New GPT" to start!</p>
+        )}
       </div>
-    </section>
+    </div>
   );
 };
 

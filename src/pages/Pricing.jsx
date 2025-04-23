@@ -18,7 +18,7 @@ const Pricing = () => {
       const endpoint =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:54321/functions/v1/create-stripe-session'
-          : 'https://YOUR_PROJECT_REF.functions.supabase.co/create-stripe-session'; // <-- Replace with your actual project ref
+          : 'https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session';
 
       const res = await fetch(endpoint, {
         method: 'POST',
@@ -48,6 +48,19 @@ const Pricing = () => {
         <p className="text-gray-400 mb-16 text-lg">
           Whether you're just getting started or scaling your AI empire, GPTmart has you covered.
         </p>
+
+        <div className="mb-20 text-left max-w-3xl mx-auto bg-[#121a2c] p-8 rounded-xl border border-gray-600 shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-white">📊 Revenue Model Overview</h2>
+          <p className="text-gray-300 mb-4 text-sm">
+            GPTmart operates on a fair and transparent revenue share model designed to help creators grow while funding the platform.
+          </p>
+          <ul className="text-sm text-gray-300 space-y-2 list-disc list-inside">
+            <li>🔸 Creators keep <span className="text-green-400 font-semibold">90%</span> of each GPT rental.</li>
+            <li>🔸 GPTmart takes a <span className="text-purple-400 font-semibold">10% platform fee</span> to support hosting, discovery, and development.</li>
+            <li>🔸 All payouts are handled via Stripe for speed and security.</li>
+            <li>🔸 No hidden fees, ever.</li>
+          </ul>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
           {/* Free Tier */}

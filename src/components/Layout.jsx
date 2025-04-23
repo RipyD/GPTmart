@@ -1,11 +1,11 @@
 import React from 'react';
 import Navbar from './Navbar';
 
-const Layout = ({ children }) => {
+const Layout = ({ children, user, onLogout }) => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0e121c] to-[#1c243b] text-white font-sans">
-      <Navbar />
-      <main className="pt-40">{children}</main>
+      <Navbar user={user} onLogout={onLogout} />
+      <main className="pt-24">{children}</main>
     </div>
   );
 };

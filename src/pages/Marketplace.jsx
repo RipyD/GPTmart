@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
+import { motion } from 'framer-motion';
 
 const Marketplace = () => {
   const [gpts, setGpts] = useState([]);
@@ -16,6 +17,17 @@ const Marketplace = () => {
 
     fetchGpts();
   }, []);
+
+  const getDemoImage = (index) => {
+    const images = [
+      'https://images.unsplash.com/photo-1581091012184-7e0cdfbb6790?fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1508385082359-f38ae991e8f2?fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1603574670812-d24560880210?fit=crop&w=600&q=80',
+      'https://images.unsplash.com/photo-1591696331115-0c8d3ee4f915?fit=crop&w=600&q=80',
+    ];
+    return images[index % images.length];
+  };
 
   const filteredGpts = selectedCategory === 'All'
     ? gpts
@@ -62,28 +74,31 @@ const Marketplace = () => {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-8">
-          {filteredGpts.map((gpt) => (
-            <Link
-              to={`/gpt/${gpt.id}`}
+          {filteredGpts.map((gpt, index) => (
+            <motion.div
               key={gpt.id}
-              className="bg-gradient-to-br from-[#1f2937] to-[#0f172a] p-5 rounded-xl border border-gray-700 shadow-md hover:border-fuchsia-500 hover:shadow-fuchsia-500/30 hover:scale-[1.03] transition-all duration-300 ease-in-out transform group relative block"
+              whileHover={{ scale: 1.05 }}
+              transition={{ type: "spring", stiffness: 300 }}
+              className="bg-gradient-to-br from-[#1f2937] to-[#0f172a] p-5 rounded-xl border border-gray-700 shadow-lg relative"
             >
-              {gpt.is_founder && (
-                <div className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-semibold px-2 py-1 rounded-full shadow ring-2 ring-orange-500 ring-offset-1">
-                  🏆 Founder
-                </div>
-              )}
-              <img
-                src={gpt.image_url || 'https://via.placeholder.com/300x200'}
-                alt={gpt.name}
-                className="w-full h-44 object-cover rounded mb-3"
-              />
-              <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition duration-200">
-                {gpt.name}
-              </h3>
-              <p className="text-sm text-gray-400 mt-1 line-clamp-2">{gpt.description}</p>
-              <p className="text-purple-300 font-semibold mt-3">${gpt.price}</p>
-            </Link>
+              <Link to={`/gpt/${gpt.id}`}>
+                {gpt.is_founder && (
+                  <div className="absolute top-2 left-2 bg-yellow-400 text-black text-xs font-semibold px-2 py-1 rounded-full shadow ring-2 ring-orange-500 ring-offset-1">
+                    🏆 Founder
+                  </div>
+                )}
+                <img
+                  src={gpt.image_url || getDemoImage(index)}
+                  alt={gpt.name}
+                  className="w-full h-44 object-cover rounded mb-3"
+                />
+                <h3 className="text-xl font-bold text-white group-hover:text-purple-400 transition duration-200">
+                  {gpt.name}
+                </h3>
+                <p className="text-sm text-gray-400 mt-1 line-clamp-2">{gpt.description}</p>
+                <p className="text-purple-300 font-semibold mt-3">${gpt.price}</p>
+              </Link>
+            </motion.div>
           ))}
         </div>
       </div>

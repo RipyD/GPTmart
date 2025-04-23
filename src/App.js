@@ -1,16 +1,15 @@
-// src/App.js
 import React, { useEffect, useState } from 'react';
 import {
   BrowserRouter as Router,
   Routes,
-  Route,
-  useLocation
+  Route
 } from 'react-router-dom';
 
 import { supabase } from './lib/supabaseClient';
 
-// ✅ All components imported correctly as default exports
+import Navbar from './components/Navbar';
 import Layout from './components/Layout';
+import Footer from './components/Footer';
 import LandingPage from './pages/LandingPage';
 import Marketplace from './pages/Marketplace';
 import CreatorDashboard from './pages/CreatorDashboard';
@@ -19,14 +18,19 @@ import GptDetail from './pages/GptDetail';
 import Login from './pages/Login';
 import Success from './pages/Success';
 import Cancel from './pages/Cancel';
+import Pricing from './pages/Pricing';
 import ProtectedRoute from './components/ProtectedRoute';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
-import Home from './pages/Home'; // Make sure this is a default export in pages/Home.jsx
-import Pricing from './pages/Pricing';
+import Home from './pages/Home';
+import NewGpt from './pages/NewGpt';
+
+import './index.css';
+
+// Import framer-motion for animation support
+import { motion } from 'framer-motion';
 
 const AppWrapper = () => {
   const [user, setUser] = useState(null);
-  const location = useLocation();
 
   useEffect(() => {
     supabase.auth.getUser().then(({ data }) => {
@@ -48,27 +52,22 @@ const AppWrapper = () => {
   };
 
   return (
-    <Routes>
-      <Route path="/" element={<Layout><Home /></Layout>} />
-      <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
-      <Route
-        path="/dashboard"
-        element={
-          <Layout>
-            <ProtectedRoute>
-              <CreatorDashboard />
-            </ProtectedRoute>
-          </Layout>
-        }
-      />
-      <Route path="/pricing" element={<Layout><Pricing /></Layout>} />
-      <Route path="/login" element={<Layout><Login /></Layout>} />
-      <Route path="/gpt/:id" element={<Layout><GptDetail /></Layout>} />
-      <Route path="/creator/:id" element={<Layout><CreatorProfile /></Layout>} />
-      <Route path="/success" element={<Layout><Success /></Layout>} />
-      <Route path="/cancel" element={<Layout><Cancel /></Layout>} />
-      <Route path="/analytics" element={<Layout><AnalyticsDashboard /></Layout>} />
-    </Routes>
+    <Layout user={user} onLogout={handleLogout}>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/marketplace" element={<Marketplace motion={motion} />} />
+        <Route path="/dashboard" element={<ProtectedRoute><CreatorDashboard /></ProtectedRoute>} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/gpt/:id" element={<GptDetail />} />
+        <Route path="/creator/:id" element={<CreatorProfile />} />
+        <Route path="/success" element={<Success />} />
+        <Route path="/cancel" element={<Cancel />} />
+        <Route path="/analytics" element={<AnalyticsDashboard />} />
+        <Route path="/pricing" element={<Pricing />} />
+        <Route path="/new-gpt" element={<ProtectedRoute><NewGpt /></ProtectedRoute>} />
+      </Routes>
+      <Footer />
+    </Layout>
   );
 };
 
