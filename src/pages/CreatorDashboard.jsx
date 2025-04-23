@@ -97,7 +97,7 @@ const CreatorDashboard = () => {
             <p className="text-gray-400 text-lg">View and manage your AI products</p>
           </div>
           <Link
-            to="/dashboard/new"
+            to="/new-gpt"
             className="bg-gradient-to-r from-purple-500 to-green-500 text-white font-semibold px-6 py-3 rounded-full shadow-md hover:scale-105 transition"
           >
             ➕ Add New GPT
