@@ -101,11 +101,12 @@ const Pricing = () => {
             </ul>
             <div className="text-2xl font-semibold text-white mb-4">$10<span className="text-sm text-white/80">/month</span></div>
             <button
-              onClick={() => handleUpgrade('price_1RH4lQBhEyGajSKTqBNxm3XA')}
-              className="inline-block bg-white text-purple-700 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition"
-            >
-              🔓 Upgrade to Pro
-            </button>
+  onClick={() => handleUpgrade('price_1RGn1eBhEyGajSKTFjMJqho7')}
+  className="inline-block bg-white text-purple-700 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition"
+>
+  🔓 Upgrade to Pro
+</button>
+
           </div>
 
           {/* Pro+ Tier */}
@@ -121,10 +122,12 @@ const Pricing = () => {
             </ul>
             <div className="text-2xl font-semibold text-white mb-4">$19<span className="text-sm text-white/80">/month</span></div>
             <button
-              onClick={() => handleUpgrade('price_1RGn1eBhEyGajSKTFjMJqho7')}
-              className="inline-block bg-white text-yellow-800 font-semibold px-6 py-2 rounded-full hover:bg-yellow-100 transition"
-            >
-              👑 Upgrade to Pro+
+  onClick={() => handleUpgrade('price_1RH4lQBhEyGajSKTqBNxm3XA')}
+  className="inline-block bg-yellow-400 text-black font-bold px-6 py-2 rounded-full hover:bg-yellow-300 transition"
+>
+  🚀 Upgrade to Pro+
+</button>
+
             </button>
           </div>
         </div>
