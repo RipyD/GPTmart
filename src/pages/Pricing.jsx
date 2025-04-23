@@ -137,4 +137,4 @@ const Pricing = () => {
 
 export default Pricing;
 
-price_1RGn1eBhEyGajSKTFjMJqho7
+
