@@ -15,23 +15,24 @@ const Pricing = () => {
 
   const handleUpgrade = async (priceId) => {
     try {
-      const endpoint = 'https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session';
+      const endpoint =
+        process.env.NODE_ENV === 'development'
+          ? 'http://localhost:54321/functions/v1/create-stripe-session'
+          : 'https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session';
 
       const { data: session } = await supabase.auth.getSession();
-      const supaUser = session?.session?.user;
-
-      if (!supaUser) {
-        alert("❌ Please log in to upgrade.");
-        return;
-      }
+      const token = session?.session?.access_token;
 
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
-          user_id: supaUser.id,
-          email: supaUser.email,
-          price_id: priceId, // ✅ This must match your plan
+          user_id: user?.id,
+          email: user?.email,
+          price_id: priceId,
         }),
       });
 
@@ -39,11 +40,11 @@ const Pricing = () => {
       if (url) {
         window.location.href = url;
       } else {
-        alert('❌ Stripe session creation failed.');
+        alert("❌ Failed to redirect to Stripe.");
       }
     } catch (error) {
-      console.error('❌ Stripe Error:', error);
-      alert('❌ An error occurred while creating the Stripe session.');
+      console.error("Stripe Error:", error);
+      alert("An error occurred while creating the Stripe session.");
     }
   };
 
@@ -55,14 +56,27 @@ const Pricing = () => {
           Whether you're just getting started or scaling your AI empire, GPTmart has you covered.
         </p>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
-          {/* Free Plan */}
+        <div className="mb-20 text-left max-w-3xl mx-auto bg-[#121a2c] p-8 rounded-xl border border-gray-600 shadow-md">
+          <h2 className="text-2xl font-bold mb-4 text-white">📊 Revenue Model Overview</h2>
+          <p className="text-gray-300 mb-4 text-sm">
+            GPTmart operates on a fair and transparent revenue share model designed to help creators grow while funding the platform.
+          </p>
+          <ul className="text-sm text-gray-300 space-y-2 list-disc list-inside">
+            <li>🔸 Creators keep <span className="text-green-400 font-semibold">90%</span> of each GPT rental.</li>
+            <li>🔸 GPTmart takes a <span className="text-purple-400 font-semibold">10% platform fee</span> to support hosting, discovery, and development.</li>
+            <li>🔸 All payouts are handled via Stripe for speed and security.</li>
+            <li>🔸 No hidden fees, ever.</li>
+          </ul>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+          {/* Free Tier */}
           <div className="bg-[#121a2c] border border-gray-600 rounded-2xl p-8 shadow-xl hover:shadow-purple-500/20 transition">
             <h2 className="text-3xl font-bold text-green-400 mb-2">Free</h2>
             <p className="text-gray-300 mb-6 text-sm">Best for testing the waters or casually listing GPTs.</p>
             <ul className="text-left space-y-3 text-sm text-gray-300 mb-8">
               <li>✅ Unlimited GPT uploads</li>
-              <li>✅ Basic analytics</li>
+              <li>✅ Basic analytics (views, rentals, revenue)</li>
               <li>✅ Stripe-powered rentals</li>
               <li>❌ No traffic or conversion insights</li>
               <li>❌ No homepage boosting or badges</li>
@@ -76,43 +90,43 @@ const Pricing = () => {
             </Link>
           </div>
 
-          {/* Pro+ Plan */}
+          {/* Pro Tier */}
           <div className="bg-gradient-to-br from-purple-600 to-pink-600 border border-purple-400 rounded-2xl p-8 shadow-xl hover:shadow-pink-500/30 transition">
-            <h2 className="text-3xl font-bold text-white mb-2">Pro+</h2>
-            <p className="text-white/90 mb-6 text-sm">All Pro features, plus AI-generated insights.</p>
-            <ul className="text-left space-y-3 text-sm text-white mb-8">
-              <li>✅ All Pro features</li>
-              <li>✅ GPT Ideas Generator</li>
-              <li>✅ NeuroLicense Insights</li>
-              <li>✅ Creator-level analytics</li>
-              <li>✅ Instant access to all tools</li>
-            </ul>
-            <div className="text-2xl font-semibold text-white mb-4">$19<span className="text-sm text-white/80">/month</span></div>
-            <button
-              onClick={() => handleUpgrade('price_1RH4lQBhEyGajSKTqBNxm3XA')} // ✅ Correct Pro+ ID
-              className="inline-block bg-yellow-400 text-black font-bold px-6 py-2 rounded-full hover:bg-yellow-300 transition"
-            >
-              🚀 Upgrade to Pro+
-            </button>
-          </div>
-
-          {/* Pro Plan */}
-          <div className="bg-gradient-to-br from-blue-700 to-indigo-800 border border-blue-400 rounded-2xl p-8 shadow-xl hover:shadow-indigo-500/30 transition mt-10 md:mt-0 col-span-2">
             <h2 className="text-3xl font-bold text-white mb-2">Pro</h2>
             <p className="text-white/90 mb-6 text-sm">Everything you need to grow, monetize, and scale.</p>
             <ul className="text-left space-y-3 text-sm text-white mb-8">
-              <li>✅ Unlimited GPTs</li>
-              <li>✅ Featured creator badge</li>
-              <li>✅ Advanced analytics (funnels, sources, revenue)</li>
-              <li>✅ Boosted marketplace ranking</li>
-              <li>✅ Early access to dev tools</li>
+              <li>✅ All Free features</li>
+              <li>✅ Advanced analytics (funnels, sources, trends)</li>
+              <li>✅ Featured Creator badge</li>
+              <li>✅ Priority placement in marketplace</li>
+              <li>✅ Early access to new tools</li>
             </ul>
             <div className="text-2xl font-semibold text-white mb-4">$10<span className="text-sm text-white/80">/month</span></div>
             <button
-              onClick={() => handleUpgrade('price_1RGn1eBhEyGajSKTFjMJqho7')} // ✅ Correct Pro ID
-              className="inline-block bg-white text-blue-700 font-bold px-6 py-2 rounded-full hover:bg-gray-100 transition"
+              onClick={() => handleUpgrade('price_1RGn1eBhEyGajSKTFjMJqho7')}
+              className="inline-block bg-white text-purple-700 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition"
             >
               🔓 Upgrade to Pro
+            </button>
+          </div>
+
+          {/* Pro+ Tier */}
+          <div className="bg-gradient-to-br from-yellow-500 to-orange-600 border border-yellow-300 rounded-2xl p-8 shadow-xl hover:shadow-yellow-400/40 transition">
+            <h2 className="text-3xl font-bold text-white mb-2">Pro+</h2>
+            <p className="text-white/90 mb-6 text-sm">Unlock AI-powered insights and selling tools.</p>
+            <ul className="text-left space-y-3 text-sm text-white mb-8">
+              <li>✅ All Pro features</li>
+              <li>✅ NeuroLicense AI analytics + fraud detection</li>
+              <li>✅ AI-powered GPT Idea Generator</li>
+              <li>✅ Performance optimization suggestions</li>
+              <li>✅ Trend-based GPT recommendations</li>
+            </ul>
+            <div className="text-2xl font-semibold text-white mb-4">$19<span className="text-sm text-white/80">/month</span></div>
+            <button
+              onClick={() => handleUpgrade('price_1RH4lQBhEyGajSKTqBNxm3XA')}
+              className="inline-block bg-white text-yellow-800 font-semibold px-6 py-2 rounded-full hover:bg-yellow-100 transition"
+            >
+              👑 Upgrade to Pro+
             </button>
           </div>
         </div>
@@ -122,3 +136,5 @@ const Pricing = () => {
 };
 
 export default Pricing;
+
+price_1RGn1eBhEyGajSKTFjMJqho7
