@@ -25,17 +25,32 @@ import Home from './pages/Home';
 import NewGpt from './pages/NewGpt';
 
 import './index.css';
-
-// Import framer-motion for animation support
 import { motion } from 'framer-motion';
 
 const AppWrapper = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => {
-      setUser(data.user);
-    });
+    const syncUserProfile = async () => {
+      const { data: session } = await supabase.auth.getUser();
+      const user = session?.user;
+      setUser(user);
+
+      if (user) {
+        const { data, error } = await supabase
+          .from('users')
+          .select('id')
+          .eq('id', user.id)
+          .single();
+
+        if (!data && !error) {
+          await supabase.from('users').insert([{ id: user.id, is_pro_plus: false }]);
+          console.log('✅ User inserted into users table');
+        }
+      }
+    };
+
+    syncUserProfile();
 
     const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);

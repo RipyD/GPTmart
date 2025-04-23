@@ -1,5 +1,3 @@
-// supabase/functions/create-stripe-session.ts
-
 import { serve } from 'https://deno.land/std/http/server.ts';
 import Stripe from 'https://esm.sh/stripe?target=deno';
 
@@ -9,14 +7,18 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
 
 serve(async (req) => {
   try {
-    const { user_id, email } = await req.json();
+    const { user_id, email, price_id } = await req.json();
+
+    if (!price_id || !email) {
+      return new Response(JSON.stringify({ error: 'Missing required data' }), { status: 400 });
+    }
 
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [
         {
-          price: 'price_1RGn1eBhEyGajSKTFjMJqho7', // ⬅️ Replace with your real Stripe Price ID
+          price: price_id, // <-- dynamic pricing
           quantity: 1,
         },
       ],
@@ -25,6 +27,7 @@ serve(async (req) => {
       customer_email: email,
       metadata: {
         user_id,
+        plan: price_id,
       },
     });
 
@@ -32,8 +35,8 @@ serve(async (req) => {
       headers: { 'Content-Type': 'application/json' },
     });
   } catch (err) {
-    console.error('Stripe session error:', err);
-    return new Response(JSON.stringify({ error: 'Failed to create session' }), {
+    console.error('❌ Stripe session error:', err);
+    return new Response(JSON.stringify({ error: 'Failed to create Stripe session' }), {
       status: 500,
     });
   }

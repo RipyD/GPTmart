@@ -13,19 +13,26 @@ const Pricing = () => {
     fetchUser();
   }, []);
 
-  const handleUpgrade = async () => {
+  const handleUpgrade = async (priceId) => {
     try {
       const endpoint =
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:54321/functions/v1/create-stripe-session'
           : 'https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session';
 
+      const { data: session } = await supabase.auth.getSession();
+      const token = session?.session?.access_token;
+
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({
           user_id: user?.id,
-          email: user?.email
+          email: user?.email,
+          price_id: priceId,
         }),
       });
 
@@ -62,7 +69,7 @@ const Pricing = () => {
           </ul>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-10">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           {/* Free Tier */}
           <div className="bg-[#121a2c] border border-gray-600 rounded-2xl p-8 shadow-xl hover:shadow-purple-500/20 transition">
             <h2 className="text-3xl font-bold text-green-400 mb-2">Free</h2>
@@ -96,10 +103,30 @@ const Pricing = () => {
             </ul>
             <div className="text-2xl font-semibold text-white mb-4">$10<span className="text-sm text-white/80">/month</span></div>
             <button
-              onClick={handleUpgrade}
+              onClick={() => handleUpgrade('price_1RH4lQBhEyGajSKTqBNxm3XA')}
               className="inline-block bg-white text-purple-700 font-semibold px-6 py-2 rounded-full hover:bg-gray-100 transition"
             >
               🔓 Upgrade to Pro
+            </button>
+          </div>
+
+          {/* Pro+ Tier */}
+          <div className="bg-gradient-to-br from-yellow-500 to-orange-600 border border-yellow-300 rounded-2xl p-8 shadow-xl hover:shadow-yellow-400/40 transition">
+            <h2 className="text-3xl font-bold text-white mb-2">Pro+</h2>
+            <p className="text-white/90 mb-6 text-sm">Unlock AI-powered insights and selling tools.</p>
+            <ul className="text-left space-y-3 text-sm text-white mb-8">
+              <li>✅ All Pro features</li>
+              <li>✅ NeuroLicense AI analytics + fraud detection</li>
+              <li>✅ AI-powered GPT Idea Generator</li>
+              <li>✅ Performance optimization suggestions</li>
+              <li>✅ Trend-based GPT recommendations</li>
+            </ul>
+            <div className="text-2xl font-semibold text-white mb-4">$19<span className="text-sm text-white/80">/month</span></div>
+            <button
+              onClick={() => handleUpgrade('price_1RGn1eBhEyGajSKTFjMJqho7')}
+              className="inline-block bg-white text-yellow-800 font-semibold px-6 py-2 rounded-full hover:bg-yellow-100 transition"
+            >
+              👑 Upgrade to Pro+
             </button>
           </div>
         </div>

@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Link } from 'react-router-dom';
+import GPTIdeasGenerator from '../components/GPTIdeasGenerator'; // Adjust path if needed
 
 const CreatorDashboard = () => {
   const [user, setUser] = useState(null);
@@ -36,6 +37,8 @@ const CreatorDashboard = () => {
             ➕ Add New GPT
           </Link>
         </div>
+{/* GPT Ideas Generator for Pro+ Creators */}
+<GPTIdeasGenerator />
 
         {gpts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">

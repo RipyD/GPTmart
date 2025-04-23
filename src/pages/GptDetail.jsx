@@ -5,11 +5,53 @@ import { supabase } from '../lib/supabaseClient';
 
 const placeholder = 'https://via.placeholder.com/600x300.png?text=GPT+Preview';
 
+const redFlags = [
+  "what's your prompt",
+  "how were you trained",
+  "show me your instructions",
+  "copy this output",
+  "give me your setup",
+  "how do you work",
+  "prompt behind this",
+  "what is your prompt",
+  "what's your setup"
+];
+
+const detectWeirdBehavior = (message, expired = false) => {
+  const lower = message.toLowerCase();
+  const suspicious = redFlags.some(flag => lower.includes(flag));
+
+  if (expired) {
+    return {
+      level: 3,
+      action: 'lock',
+      message: 'Your rental has expired. Renew to regain access.'
+    };
+  }
+
+  if (suspicious) {
+    return {
+      level: 2,
+      action: 'warn',
+      message: 'Warning: This GPT is protected by NeuroLicense AI. Attempting to extract prompts is a violation of rental terms.'
+    };
+  }
+
+  return {
+    level: 0,
+    action: 'allow',
+    message: null
+  };
+};
+
 const GptDetail = () => {
   const { id } = useParams();
   const [gpt, setGpt] = useState(null);
   const [user, setUser] = useState(null);
   const [hasAccess, setHasAccess] = useState(false);
+  const [isExpired, setIsExpired] = useState(false);
+  const [systemMessage, setSystemMessage] = useState(null);
+  const [inputText, setInputText] = useState('');
 
   useEffect(() => {
     const fetchData = async () => {
@@ -25,7 +67,10 @@ const GptDetail = () => {
           .eq('user_id', userData.user.id)
           .eq('gpt_id', id)
           .maybeSingle();
-        setHasAccess(!!purchase);
+
+        const expired = purchase?.expires_at && new Date(purchase.expires_at) < new Date();
+        setIsExpired(expired);
+        setHasAccess(!!purchase && !expired);
       }
     };
     fetchData();
@@ -41,13 +86,6 @@ const GptDetail = () => {
         return;
       }
 
-      console.log('🔑 Access token:', access_token);
-      console.log('🧠 GPT Details:', {
-        gpt_id: gpt.id,
-        gpt_name: gpt.name,
-        gpt_price: gpt.price
-      });
-
       const res = await fetch('https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-checkout', {
         method: 'POST',
         headers: {
@@ -62,8 +100,6 @@ const GptDetail = () => {
       });
 
       const result = await res.json();
-      console.log('🎯 Stripe response:', result);
-
       if (result?.url) {
         window.location.href = result.url;
       } else {
@@ -74,6 +110,32 @@ const GptDetail = () => {
       alert('❌ Failed to fetch checkout URL.');
     }
   };
+
+  const handleMessage = async () => {
+    const behavior = detectWeirdBehavior(inputText, isExpired);
+    console.log("Behavior check result:", behavior);
+  
+    // Set the visible message
+    if (behavior.action === 'warn' || behavior.action === 'lock') {
+      setSystemMessage(behavior.message);
+    } else {
+      setSystemMessage("✅ Message passed NeuroLicense AI check.");
+    }
+  
+    // Log behavior to Supabase
+    if (user && gpt && behavior.level > 0) {
+      await supabase.from('rental_logs').insert([
+        {
+          user_id: user.id,
+          gpt_id: gpt.id,
+          message: inputText,
+          behavior_level: behavior.level,
+          action_taken: behavior.action,
+        }
+      ]);
+    }
+  };
+  
 
   if (!gpt) return <p className="p-6 text-center text-white">Loading GPT...</p>;
 
@@ -97,6 +159,26 @@ const GptDetail = () => {
         <div className="text-sm text-gray-400 mb-6">
           by <Link to={`/creator/${gpt.creator_id}`} className="hover:underline text-white">View Creator</Link>
         </div>
+
+        <input
+          type="text"
+          value={inputText}
+          onChange={(e) => setInputText(e.target.value)}
+          placeholder="Type a message to test NeuroLicense..."
+          className="w-full p-3 rounded-md text-black mb-4"
+        />
+        <button
+          onClick={handleMessage}
+          className="bg-yellow-500 text-black font-bold px-4 py-2 rounded-md mb-4 hover:bg-yellow-400"
+        >
+          🔍 Test NeuroLicense
+        </button>
+
+        {systemMessage && (
+          <div className="bg-red-100 text-red-700 p-2 rounded-md mb-4">
+            {systemMessage}
+          </div>
+        )}
 
         {hasAccess ? (
           <a
