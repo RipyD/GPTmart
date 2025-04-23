@@ -19,34 +19,32 @@ const Pricing = () => {
         process.env.NODE_ENV === 'development'
           ? 'http://localhost:54321/functions/v1/create-stripe-session'
           : 'https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session';
-
+  
       const { data: session } = await supabase.auth.getSession();
-      const token = session?.session?.access_token;
-
+      const user = session?.session?.user;
+  
       const res = await fetch(endpoint, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           user_id: user?.id,
           email: user?.email,
-          price_id: priceId,
+          price_id: priceId, // ✅ required
         }),
       });
-
+  
       const { url } = await res.json();
       if (url) {
         window.location.href = url;
       } else {
-        alert("❌ Failed to redirect to Stripe.");
+        alert('❌ Failed to redirect to Stripe.');
       }
     } catch (error) {
-      console.error("Stripe Error:", error);
-      alert("An error occurred while creating the Stripe session.");
+      console.error('Stripe Error:', error);
+      alert('❌ An error occurred while creating the Stripe session.');
     }
   };
+  
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0e0f1a] to-[#1c1e2c] text-white py-20 px-6">

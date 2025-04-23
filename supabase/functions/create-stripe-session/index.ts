@@ -6,11 +6,30 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
 });
 
 serve(async (req) => {
+  // ✅ Handle CORS preflight OPTIONS request before anything else
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', {
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
+    });
+  }
+
   try {
     const { user_id, email, price_id } = await req.json();
 
     if (!price_id || !email) {
-      return new Response(JSON.stringify({ error: 'Missing required data' }), { status: 400 });
+      return new Response(JSON.stringify({ error: 'Missing required data' }), {
+        status: 400,
+        headers: {
+          'Content-Type': 'application/json',
+          'Access-Control-Allow-Origin': '*',
+          'Access-Control-Allow-Methods': 'POST, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+        },
+      });
     }
 
     const session = await stripe.checkout.sessions.create({
@@ -18,7 +37,7 @@ serve(async (req) => {
       payment_method_types: ['card'],
       line_items: [
         {
-          price: price_id, // <-- dynamic pricing
+          price: price_id,
           quantity: 1,
         },
       ],
@@ -32,12 +51,24 @@ serve(async (req) => {
     });
 
     return new Response(JSON.stringify({ url: session.url }), {
-      headers: { 'Content-Type': 'application/json' },
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
     });
+
   } catch (err) {
     console.error('❌ Stripe session error:', err);
     return new Response(JSON.stringify({ error: 'Failed to create Stripe session' }), {
       status: 500,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+      },
     });
   }
 });
