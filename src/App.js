@@ -6,6 +6,7 @@ import {
 } from 'react-router-dom';
 
 import { supabase } from './lib/supabaseClient';
+import AddGpt from './pages/AddGpt';
 
 import Navbar from './components/Navbar';
 import Layout from './components/Layout';
@@ -23,6 +24,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import AnalyticsDashboard from './pages/AnalyticsDashboard';
 import Home from './pages/Home';
 import NewGpt from './pages/NewGpt';
+import GptEdit from './pages/GptEdit';
 
 import './index.css';
 import { motion } from 'framer-motion';
@@ -65,6 +67,7 @@ const AppWrapper = () => {
     await supabase.auth.signOut();
     setUser(null);
   };
+<Route path="/add-gpt" element={<ProtectedRoute><AddGpt /></ProtectedRoute>} />
 
   return (
     <Layout user={user} onLogout={handleLogout}>
@@ -79,6 +82,11 @@ const AppWrapper = () => {
         <Route path="/cancel" element={<Cancel />} />
         <Route path="/analytics" element={<AnalyticsDashboard />} />
         <Route path="/pricing" element={<Pricing />} />
+        <Route path="/gpt/:id" element={<ProtectedRoute><GptEdit /></ProtectedRoute>} />
+
+        <Route path="/add-gpt" element={<ProtectedRoute><AddGpt /></ProtectedRoute>} />
+       
+
         <Route path="/new-gpt" element={<ProtectedRoute><NewGpt /></ProtectedRoute>} />
       </Routes>
       <Footer />

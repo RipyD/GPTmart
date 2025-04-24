@@ -3,26 +3,34 @@ import { useLocation, Link } from 'react-router-dom';
 
 const Success = () => {
   const query = new URLSearchParams(useLocation().search);
-  const gptUrl = query.get('gpt_url');
+  const gptUrl = decodeURIComponent(query.get('gpt_url') || '');
+  console.log("📦 Success page query:", window.location.search);
 
   return (
-    <div className="max-w-xl mx-auto p-6 text-center">
-      <h1 className="text-3xl font-bold text-green-600 mb-4">🎉 Payment Successful!</h1>
-      <p className="mb-4">Thanks for your purchase. Click below to access your GPT.</p>
+    <div className="max-w-xl mx-auto p-6 text-center text-white">
+      <h1 className="text-3xl font-bold text-green-500 mb-4">🎉 Payment Successful!</h1>
+      <p className="mb-4">Thanks for your purchase.</p>
+
       {gptUrl ? (
-        <a
-          href={gptUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-block bg-blue-600 text-white px-6 py-2 rounded hover:bg-blue-700 transition"
-        >
-          🚀 Launch GPT
-        </a>
+        <div className="mt-4 text-sm break-words">
+          <p className="text-gray-300 mb-2">Your GPT is ready:</p>
+          <a
+            href={gptUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-400 underline"
+          >
+            🚀 Click here to open it
+          </a>
+        </div>
       ) : (
-        <p className="text-gray-600">No GPT URL provided.</p>
+        <p className="text-gray-500">No GPT URL provided.</p>
       )}
+
       <div className="mt-6">
-        <Link to="/marketplace" className="text-blue-500 hover:underline">← Back to Marketplace</Link>
+        <Link to="/marketplace" className="text-blue-500 hover:underline">
+          ← Back to Marketplace
+        </Link>
       </div>
     </div>
   );

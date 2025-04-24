@@ -6,7 +6,6 @@ const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
 });
 
 serve(async (req) => {
-  // ✅ Handle CORS preflight OPTIONS request before anything else
   if (req.method === 'OPTIONS') {
     return new Response('ok', {
       headers: {
@@ -18,9 +17,9 @@ serve(async (req) => {
   }
 
   try {
-    const { user_id, email, price_id } = await req.json();
+    const { user_id, email, price_id, gpt_url, gpt_id } = await req.json();
 
-    if (!price_id || !email) {
+    if (!price_id || !email || !gpt_url || !gpt_id || !user_id) {
       return new Response(JSON.stringify({ error: 'Missing required data' }), {
         status: 400,
         headers: {
@@ -32,6 +31,9 @@ serve(async (req) => {
       });
     }
 
+    // ✅ Log for sanity check
+    console.log('✅ Creating session with gpt_url:', gpt_url);
+
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       payment_method_types: ['card'],
@@ -41,11 +43,12 @@ serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: 'https://gptmart.ai/success',
+      success_url: `https://gptmart.ai/success?gpt_url=${encodeURIComponent(gpt_url)}`,
       cancel_url: 'https://gptmart.ai/cancel',
       customer_email: email,
       metadata: {
         user_id,
+        gpt_id,
         plan: price_id,
       },
     });
