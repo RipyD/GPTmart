@@ -77,7 +77,7 @@ const GptDetail = () => {
         return;
       }
 
-      const res = await fetch('https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-stripe-session', {
+      const res = await fetch('https://dfrdebyrwcerxqhvqwgr.functions.supabase.co/create-checkout', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

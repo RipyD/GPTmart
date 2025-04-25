@@ -12,35 +12,30 @@ serve(async (req) => {
   }
 
   try {
-    const { gpt_id, gpt_name, gpt_price, gpt_url } = await req.json();
+    const { gpt_id, gpt_url, price_id, user_id, email } = await req.json();
 
-    if (!gpt_id || !gpt_name || !gpt_price || !gpt_url) {
-      return new Response(JSON.stringify({ error: "Missing parameters" }), {
+    if (!gpt_id || !gpt_url || !price_id || !user_id || !email) {
+      return new Response(JSON.stringify({ error: "Missing required GPT details" }), {
         status: 400,
         headers: { "Content-Type": "application/json" },
       });
     }
 
     const session = await stripe.checkout.sessions.create({
+      mode: "payment",
       payment_method_types: ["card"],
       line_items: [
         {
-          price_data: {
-            currency: "usd",
-            product_data: {
-              name: `Rent GPT: ${gpt_name}`,
-            },
-            unit_amount: Math.round(gpt_price * 100),
-          },
+          price: price_id,
           quantity: 1,
         },
       ],
-      mode: "payment",
-      success_url: `http://localhost:3000/success?gpt_url=${encodeURIComponent(gpt_url)}`,
-      cancel_url: "http://localhost:3000/cancel",
+      success_url: `https://gptmart.ai/success?gpt_url=${encodeURIComponent(gpt_url)}`,
+      cancel_url: "https://gptmart.ai/cancel",
+      customer_email: email,
       metadata: {
         gpt_id,
-        gpt_name,
+        user_id,
         gpt_url,
       },
     });
@@ -48,6 +43,7 @@ serve(async (req) => {
     return new Response(JSON.stringify({ url: session.url }), {
       headers: { "Content-Type": "application/json" },
     });
+
   } catch (err) {
     console.error("❌ Stripe error:", err);
     return new Response(JSON.stringify({ error: "Stripe checkout failed" }), {
