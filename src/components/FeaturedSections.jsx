@@ -43,12 +43,18 @@ const FeaturedSections = () => {
         .from('gpts')
         .select('*')
         .eq('featured', true)
+        .eq('is_test', false)
+        .eq('is_published', true)
+        .not('creator_id', 'is', null)
         .limit(8);
 
       const { data: weekly } = await supabase
         .from('gpts')
         .select('*')
         .eq('weekly', true)
+        .eq('is_test', false)
+        .eq('is_published', true)
+        .not('creator_id', 'is', null)
         .limit(4);
 
       const { data: creators } = await supabase
@@ -94,4 +100,3 @@ const FeaturedSections = () => {
 };
 
 export default FeaturedSections;
-

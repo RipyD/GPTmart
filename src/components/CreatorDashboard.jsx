@@ -1,4 +1,3 @@
-// src/pages/CreatorDashboard.jsx
 import React, { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { Link } from 'react-router-dom';
@@ -8,21 +7,43 @@ const CreatorDashboard = () => {
   const [user, setUser] = useState(null);
   const [gpts, setGpts] = useState([]);
 
+  const fetchUserAndGPTs = async () => {
+    const { data: session } = await supabase.auth.getUser();
+    setUser(session.user);
+
+    const { data: userGPTs, error } = await supabase
+      .from('gpts')
+      .select('*')
+      .eq('creator_id', session.user.id);
+
+    if (error) {
+      console.error('❌ Error fetching GPTs:', error.message);
+    } else {
+      setGpts(userGPTs);
+    }
+  };
+
   useEffect(() => {
-    const fetchUserAndGPTs = async () => {
-      const { data: session } = await supabase.auth.getUser();
-      setUser(session.user);
-
-      const { data: userGPTs, error } = await supabase
-        .from('gpts')
-        .select('*')
-        .eq('creator_id', session.user.id);
-
-      if (!error) setGpts(userGPTs);
-    };
-
     fetchUserAndGPTs();
   }, []);
+
+  const handleDelete = async (gptId) => {
+    const confirm = window.confirm("Are you sure you want to delete this GPT?");
+    if (!confirm || !user) return;
+
+    const { error } = await supabase
+      .from('gpts')
+      .delete()
+      .eq('id', gptId)
+      .eq('creator_id', user.id); // secure match
+
+    if (error) {
+      console.error("❌ Error deleting GPT:", error.message);
+      alert("Failed to delete GPT. Please try again.");
+    } else {
+      fetchUserAndGPTs(); // refetch list after delete
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#0e121c] to-[#1c243b] text-white px-6 py-16">
@@ -37,8 +58,9 @@ const CreatorDashboard = () => {
             ➕ Add New GPT
           </Link>
         </div>
-{/* GPT Ideas Generator for Pro+ Creators */}
-<GPTIdeasGenerator />
+
+        {/* GPT Ideas Generator for Pro+ Creators */}
+        <GPTIdeasGenerator />
 
         {gpts.length > 0 ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
@@ -48,9 +70,17 @@ const CreatorDashboard = () => {
                 <h3 className="text-xl font-bold text-white">{gpt.name}</h3>
                 <p className="text-sm text-gray-400 line-clamp-2 mb-2">{gpt.description}</p>
                 <p className="text-green-400 font-bold mb-3">${gpt.price}</p>
-                <div className="flex justify-between text-sm text-gray-400">
+                <div className="flex justify-between text-sm text-gray-400 mb-2">
                   <span>👁 {gpt.views || 0}</span>
                   <span>💸 {gpt.total_rentals || 0}</span>
+                </div>
+                <div className="text-right mt-2">
+                  <button
+                    onClick={() => handleDelete(gpt.id)}
+                    className="text-red-400 hover:underline text-sm"
+                  >
+                    🗑️ Delete
+                  </button>
                 </div>
               </div>
             ))}

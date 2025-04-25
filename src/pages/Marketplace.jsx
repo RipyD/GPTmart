@@ -10,9 +10,19 @@ const Marketplace = () => {
 
   useEffect(() => {
     const fetchGpts = async () => {
-      const { data, error } = await supabase.from('gpts').select('*').order('created_at', { ascending: false });
-      if (error) console.error('❌ Error fetching GPTs:', error);
-      else setGpts(data);
+      const { data, error } = await supabase
+        .from('gpts')
+        .select('*')
+        .eq('is_test', false)
+        .eq('is_published', true)
+        .not('creator_id', 'is', null)
+        .order('created_at', { ascending: false });
+
+      if (error) {
+        console.error('❌ Error fetching GPTs:', error);
+      } else {
+        setGpts(data);
+      }
     };
 
     fetchGpts();

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabaseClient';
-import FeaturedSections from '../components/FeaturedSections';
 import { motion } from 'framer-motion';
 
 const LandingPage = () => {
@@ -11,16 +10,27 @@ const LandingPage = () => {
 
   useEffect(() => {
     const fetchGpts = async () => {
-      const { data, error } = await supabase
+      const { data: featuredData, error: featuredError } = await supabase
         .from('gpts')
         .select('*')
-        .order('created_at', { ascending: false });
+        .eq('is_featured', true)
+        .eq('is_test', false)
+        .eq('is_published', true)
+        .not('creator_id', 'is', null);
 
-      if (error) console.error('❌ Error fetching GPTs:', error.message);
-      else {
-        setFeatured(data.slice(0, 3));
-        setWeekly(data.slice(3, 6));
-      }
+      const { data: weeklyData, error: weeklyError } = await supabase
+        .from('gpts')
+        .select('*')
+        .eq('is_gpt_of_week', true)
+        .eq('is_test', false)
+        .eq('is_published', true)
+        .not('creator_id', 'is', null);
+
+      if (featuredError) console.error('❌ Error fetching featured GPTs:', featuredError.message);
+      if (weeklyError) console.error('❌ Error fetching weekly GPTs:', weeklyError.message);
+
+      setFeatured(featuredData || []);
+      setWeekly(weeklyData || []);
     };
 
     fetchGpts();
@@ -43,9 +53,15 @@ const LandingPage = () => {
       <div className="min-h-screen bg-gradient-to-b from-[#150c2a] to-[#1c243b] text-white px-6 py-12">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-10">
-            <h1 className="text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 animate-pulse"><span className="text-red-500 animate-bounce drop-shadow-md">🚀</span> Discover the Future of AI at GPTmart</h1>
-            <p className="text-gray-300 mb-6 max-w-2xl mx-auto text-lg">Custom GPTs. Killer use cases. Built by brilliant creators. Rent what you need, when you need it.</p>
-            <p className="text-gray-400 text-xs mb-6 max-w-xl mx-auto tracking-wide uppercase">Zero setup. Try before you buy.</p>
+            <h1 className="text-5xl font-extrabold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500 animate-pulse">
+              <span className="text-red-500 animate-bounce drop-shadow-md">🚀</span> Discover the Future of AI at GPTmart
+            </h1>
+            <p className="text-gray-300 mb-6 max-w-2xl mx-auto text-lg">
+              Custom GPTs. Killer use cases. Built by brilliant creators. Rent what you need, when you need it.
+            </p>
+            <p className="text-gray-400 text-xs mb-6 max-w-xl mx-auto tracking-wide uppercase">
+              Zero setup. Try before you buy.
+            </p>
             <button
               onClick={() => navigate('/marketplace')}
               className="relative overflow-hidden group bg-indigo-600 hover:bg-indigo-700 text-white font-bold px-6 py-3 rounded-full shadow-lg transition duration-300 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-indigo-500"
